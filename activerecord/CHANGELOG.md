@@ -1,3 +1,7 @@
+*   Remove `ActiveRecord.legacy_connection_handling`.
+
+    *Eileen M. Uchitelle*
+
 *   Fixed MariaDB default function support.
 
     Defaults would be written wrong in "db/schema.rb" and not work correctly
