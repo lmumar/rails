@@ -1005,14 +1005,19 @@ module ActiveRecord
     #   # triggers @brake.car.touch and @brake.car.corporation.touch
     #   @brake.touch
     #
-    # Note that +touch+ must be used on a persisted object, or else an
+    # Note that +touch+ must be used on a persisted, non-readonly object, or else an
     # ActiveRecordError will be thrown. For example:
     #
     #   ball = Ball.new
     #   ball.touch(:updated_at)   # => raises ActiveRecordError
     #
+    #   ball = Ball.first
+    #   ball.readonly!
+    #   ball.touch(:updated_at) # => raises ReadOnlyRecord
+    #
     def touch(*names, time: nil)
       _raise_record_not_touched_error unless persisted?
+      _raise_readonly_record_error if readonly?
 
       attribute_names = timestamp_attributes_for_update_in_model
       attribute_names |= names.map! do |name|

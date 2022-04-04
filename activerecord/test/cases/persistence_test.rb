@@ -1305,6 +1305,20 @@ class PersistenceTest < ActiveRecord::TestCase
     assert_equal parrot.updated_at, updated_at
   end
 
+  def test_touch_for_readonly_object
+    parrot = Parrot.create!(name: "Bob")
+    created_at = parrot.created_at
+    updated_at = parrot.updated_at
+
+    parrot.readonly!
+    assert_raises(ActiveRecord::ReadOnlyRecord) do
+      parrot.touch
+    end
+    parrot.reload
+    assert_equal parrot.created_at, created_at
+    assert_equal parrot.updated_at, updated_at
+  end
+
   def test_reset_column_information_resets_children
     child_class = Class.new(Topic)
     child_class.new # force schema to load
